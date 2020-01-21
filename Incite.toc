@@ -1,0 +1,16 @@
+## Interface: 11303
+## Title: Incite Raid Helper
+## Notes: WoW classic raid assist addon
+## Author: 4Shot Development
+## SavedVariables: Incite_Database
+## Version: 0.0.1
+
+Libs\embeds.xml
+
+Incite.lua
+
+AddOnInterop.lua
+GuildHandlers.lua
+RaidHandlers.lua
+Utilities.lua
+WowInterop.lua
