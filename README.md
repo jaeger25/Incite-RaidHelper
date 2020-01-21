@@ -1,2 +1,2 @@
 # Incite-RaidHelper
-WoW classic on for assisting raids
+WoW classic addon for assisting raids
