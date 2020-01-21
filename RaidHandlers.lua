@@ -4,12 +4,18 @@ _G["RaidHandlers"] = RaidHandlers
 LibStub("AceComm-3.0"):Embed(RaidHandlers)
 LibStub("AceTimer-3.0"):Embed(RaidHandlers)
 
-local function ConcatAddOnNames(includeVersions)
+local function ConcatAddonNames(includeVersions)
     local addons = ""
+    addons = addons.."Incite Raid Helper"
+    if includeVersions
+    then
+        addons = addons..","..Incite.version.."|"
+    end
+
     addons = addons.."DBM"
     if includeVersions
     then
-        addons = addons..","..DbmInterop:GetVersion()..";"
+        addons = addons..","..DbmInterop:GetVersion().."|"
     end
 
     addons = addons.."Details"
@@ -21,24 +27,75 @@ local function ConcatAddOnNames(includeVersions)
     return addons
 end
 
+local function SplitAddonNames(addonNames)
+    local addons = {}
+    local addonStrings = SplitString(addonNames, "|")
+    for i,v in ipairs(addonStrings)
+    do
+        local addonString = SplitString(v, ",")
+        addons[addonString[1]] = addonString[2]
+    end
+
+    return addons
+end
+
 function RaidHandlers:CheckAddons()
     self.CheckAddonsResponses = {}
 
-    local addons = ConcatAddOnNames(false)
+    local addons = ConcatAddonNames(false)
     Incite:SendCommMessage("incite-raid", "check-addons-request:"..addons, "RAID")
 
-    self:ScheduleTimer(self.OnCheckAddonsTimerExpired, 10)
+    self:ScheduleTimer("OnCheckAddonsTimerExpired", 10)
 end
 
 function RaidHandlers:OnCheckAddonsTimerExpired()
     local raidMembers = {}
+    local raidMemberAddons = {}
     local numRaidMembers = GetNumGroupMembers()
+    local playerName = UnitName("player")
+
     for i=1, numRaidMembers
     do
-        raidMembers[i] = {GetRaidRosterInfo()}
+        raidMembers[i] = {GetRaidRosterInfo(i)}
+        raidMemberAddons[raidMembers[i][1]] = {}
+    end
+    raidMemberAddons[playerName] = SplitAddonNames(ConcatAddonNames(true))
+
+    local latestAddons = SplitAddonNames(ConcatAddonNames(true))
+    for sender,addonNames in pairs(self.CheckAddonsResponses)
+    do
+        local addons = SplitAddonNames(addonNames)
+        raidMemberAddons[sender] = addons
+
+        for name,version in pairs(addons)
+        do
+            if version > latestAddons[name]
+            then
+                latestAddons[name] = version
+            end
+        end
     end
 
+    SendChatMessage("===REQUIRED ADDON STATUS===", "RAID_WARNING")
+    SendChatMessage("LATEST VERSIONS:", "RAID")
+    for name, version in pairs(latestAddons)
+    do
+        SendChatMessage(name..": "..version, "RAID")
+    end
 
+    SendChatMessage("OFFENDING PLAYERS:", "RAID")
+    for member, memberAddons in pairs(raidMemberAddons)
+    do
+        for name, version in pairs(latestAddons)
+        do
+            if memberAddons[name] ~= version
+            then
+                SendChatMessage("Your required raid addons are out-of-date. Please go update them immediately.", "WHISPER", nil, member)
+                SendChatMessage(member, "RAID")
+                break
+            end
+        end
+    end
 end
 
 function RaidHandlers:OnCommReceived(prefix, message, distribution, sender)
@@ -55,7 +112,7 @@ function RaidHandlers:OnCommReceived(prefix, message, distribution, sender)
 end
 
 function RaidHandlers:OnCheckAddonsRequest(addons, sender)
-    local addons = ConcatAddOnNames(true)
+    local addons = ConcatAddonNames(true)
     Incite:SendCommMessage("incite-raid", "check-addons-response:"..addons, "WHISPER", sender)
 end
 
