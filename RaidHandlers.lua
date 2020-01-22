@@ -3,6 +3,7 @@ _G["RaidHandlers"] = RaidHandlers
 
 LibStub("AceComm-3.0"):Embed(RaidHandlers)
 LibStub("AceTimer-3.0"):Embed(RaidHandlers)
+LibStub("AceEvent-3.0"):Embed(RaidHandlers)
 
 local function ConcatAddonNames(includeVersions)
     local addons = ""
@@ -43,7 +44,7 @@ function RaidHandlers:CheckAddons()
     self.CheckAddonsResponses = {}
 
     local addons = ConcatAddonNames(false)
-    Incite:SendCommMessage("incite-raid", "check-addons-request:"..addons, "RAID")
+    self:SendCommMessage("incite-raid", "check-addons-request:"..addons, "RAID")
 
     self:ScheduleTimer("OnCheckAddonsTimerExpired", 10)
 end
@@ -84,6 +85,8 @@ function RaidHandlers:OnCheckAddonsTimerExpired()
     end
 
     SendChatMessage("OFFENDING PLAYERS:", "RAID")
+
+    self:RegisterEvent("CHAT_MSG_WHISPER_INFORM")
     for member, memberAddons in pairs(raidMemberAddons)
     do
         for name, version in pairs(latestAddons)
@@ -91,16 +94,20 @@ function RaidHandlers:OnCheckAddonsTimerExpired()
             if memberAddons[name] ~= version
             then
                 SendChatMessage("Your required raid addons are out-of-date. Please go update them immediately.", "WHISPER", nil, member)
+                SendChatMessage("Your versions: "..table.tostring(memberAddons), "WHISPER", nil, member)
                 SendChatMessage(member, "RAID")
                 break
             end
         end
     end
+    self:UnregisterEvent("CHAT_MSG_WHISPER_INFORM")
 end
 
 function RaidHandlers:OnCommReceived(prefix, message, distribution, sender)
     local addons = SplitString(message, ":");
     local command = table.remove(addons, 1)
+
+    Incite:Print("Response Recieve: "..command.." | "..message.." | "..distribution)
 
     if command == "check-addons-request"
     then
@@ -113,11 +120,16 @@ end
 
 function RaidHandlers:OnCheckAddonsRequest(addons, sender)
     local addons = ConcatAddonNames(true)
-    Incite:SendCommMessage("incite-raid", "check-addons-response:"..addons, "WHISPER", sender)
+    self:SendCommMessage("incite-raid", "check-addons-response:"..addons, "WHISPER", sender)
 end
 
 function RaidHandlers:OnCheckAddonsResponse(addons, sender)
     self.CheckAddonsResponses[sender] = addons
 end
 
-Incite:RegisterComm("incite-raid", RaidHandlers.OnCommReceived)
+function RaidHandlers:CHAT_MSG_WHISPER_INFORM(...)
+    -- Discard chat message
+    return true
+end
+
+RaidHandlers:RegisterComm("incite-raid")
