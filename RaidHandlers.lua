@@ -85,22 +85,25 @@ function RaidHandlers:OnCheckAddonsTimerExpired()
     end
 
     SendChatMessage("OFFENDING PLAYERS:", "RAID")
-
-    self:RegisterEvent("CHAT_MSG_WHISPER_INFORM")
     for member, memberAddons in pairs(raidMemberAddons)
     do
+        local isOutOfDate = false
+        local chatMessage = member.." : "
         for name, version in pairs(latestAddons)
         do
             if memberAddons[name] ~= version
             then
-                SendChatMessage("Your required raid addons are out-of-date. Please go update them immediately.", "WHISPER", nil, member)
-                SendChatMessage("Your versions: "..table.tostring(memberAddons), "WHISPER", nil, member)
-                SendChatMessage(member, "RAID")
+                isOutOfDate = true
+                chatMessage = chatMessage..name","..(memberAddons[version] or "unknown)  "
                 break
             end
         end
+
+        if isOutOfDate
+        then
+            SendChatMessage(chatMessage, "RAID")
+        end
     end
-    self:UnregisterEvent("CHAT_MSG_WHISPER_INFORM")
 end
 
 function RaidHandlers:OnCommReceived(prefix, message, distribution, sender)
@@ -125,11 +128,6 @@ end
 
 function RaidHandlers:OnCheckAddonsResponse(addons, sender)
     self.CheckAddonsResponses[sender] = addons
-end
-
-function RaidHandlers:CHAT_MSG_WHISPER_INFORM(...)
-    -- Discard chat message
-    return true
 end
 
 RaidHandlers:RegisterComm("incite-raid")
