@@ -10,7 +10,7 @@ Libs\embeds.xml
 Incite.lua
 
 AddOnInterop.lua
+DebuffTracker.lua
 GuildHandlers.lua
 RaidHandlers.lua
 Utilities.lua
-WowInterop.lua

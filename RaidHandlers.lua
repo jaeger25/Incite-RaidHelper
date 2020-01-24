@@ -3,7 +3,6 @@ _G["RaidHandlers"] = RaidHandlers
 
 LibStub("AceComm-3.0"):Embed(RaidHandlers)
 LibStub("AceTimer-3.0"):Embed(RaidHandlers)
-LibStub("AceEvent-3.0"):Embed(RaidHandlers)
 
 local function ConcatAddonNames()
     local addons = ""

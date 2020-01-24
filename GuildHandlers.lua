@@ -11,7 +11,7 @@ function GuildHandlers:GUILD_ROSTER_UPDATE(canRequestRosterUpdate)
 end
 
 function GuildHandlers:SaveRoster()
-    local guildName, guildRankName, guildRankIndex, realm = GetGuildInfo(Wow.UnitId.player);
+    local guildName, guildRankName, guildRankIndex, realm = GetGuildInfo("player");
     local numTotal, numOnline, numOnlineAndMobile = GetNumGuildMembers();
     local unixTimestamp = GetServerTime()
 
