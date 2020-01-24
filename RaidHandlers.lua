@@ -5,25 +5,11 @@ LibStub("AceComm-3.0"):Embed(RaidHandlers)
 LibStub("AceTimer-3.0"):Embed(RaidHandlers)
 LibStub("AceEvent-3.0"):Embed(RaidHandlers)
 
-local function ConcatAddonNames(includeVersions)
+local function ConcatAddonNames()
     local addons = ""
-    addons = addons.."Incite Raid Helper"
-    if includeVersions
-    then
-        addons = addons..","..Incite.version.."|"
-    end
-
-    addons = addons.."DBM"
-    if includeVersions
-    then
-        addons = addons..","..DbmInterop:GetVersion().."|"
-    end
-
-    addons = addons.."Details"
-    if includeVersions
-    then
-        addons = addons..","..DetailsInterop:GetVersion()
-    end
+    addons = addons.."Incite Raid Helper"..","..Incite.version.."|"
+    addons = addons.."DBM"..","..DbmInterop:GetVersion().."|"
+    addons = addons.."Details"..","..DetailsInterop:GetVersion()
 
     return addons
 end
@@ -43,7 +29,7 @@ end
 function RaidHandlers:CheckAddons()
     self.CheckAddonsResponses = {}
 
-    local addons = ConcatAddonNames(false)
+    local addons = ConcatAddonNames()
     self:SendCommMessage("incite-raid", "check-addons-request:"..addons, "RAID")
 
     self:ScheduleTimer("OnCheckAddonsTimerExpired", 10)
@@ -60,9 +46,9 @@ function RaidHandlers:OnCheckAddonsTimerExpired()
         raidMembers[i] = {GetRaidRosterInfo(i)}
         raidMemberAddons[raidMembers[i][1]] = {}
     end
-    raidMemberAddons[playerName] = SplitAddonNames(ConcatAddonNames(true))
+    raidMemberAddons[playerName] = SplitAddonNames(ConcatAddonNames())
 
-    local latestAddons = SplitAddonNames(ConcatAddonNames(true))
+    local latestAddons = SplitAddonNames(ConcatAddonNames())
     for sender,addonNames in pairs(self.CheckAddonsResponses)
     do
         local addons = SplitAddonNames(addonNames)
@@ -94,8 +80,7 @@ function RaidHandlers:OnCheckAddonsTimerExpired()
             if memberAddons[name] ~= version
             then
                 isOutOfDate = true
-                chatMessage = chatMessage..name","..(memberAddons[version] or "unknown)  "
-                break
+                chatMessage = chatMessage..name..","..(memberAddons[name] or "?").."  "
             end
         end
 
@@ -107,10 +92,9 @@ function RaidHandlers:OnCheckAddonsTimerExpired()
 end
 
 function RaidHandlers:OnCommReceived(prefix, message, distribution, sender)
-    local addons = SplitString(message, ":");
-    local command = table.remove(addons, 1)
-
-    Incite:Print("Response Recieve: "..command.." | "..message.." | "..distribution)
+    message = SplitString(message, ":");
+    local command = table.remove(message, 1)
+    local addons = message[1]
 
     if command == "check-addons-request"
     then

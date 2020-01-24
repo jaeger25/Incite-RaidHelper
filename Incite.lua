@@ -16,7 +16,7 @@ function Incite:OnDisable()
 end
 
 function Incite:DispatchCommand(input)
-    local args = SplitString(input);
+    local args = SplitString(input, " ");
     local command = table.remove(args, 1)
 
     if command == "backup"
