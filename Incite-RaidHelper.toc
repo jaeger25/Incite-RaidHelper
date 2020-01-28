@@ -3,11 +3,12 @@
 ## Notes: WoW classic raid assist addon
 ## Author: 4Shot Development
 ## SavedVariables: Incite_Database
-## Version: 0.0.4
+## Version: 0.0.5
 
 Libs\embeds.xml
 
 Incite.lua
+InciteConfig.lua
 
 AddOnInterop.lua
 DebuffTracker.lua

@@ -1,7 +1,7 @@
 Incite = LibStub("AceAddon-3.0"):NewAddon("Incite", "AceConsole-3.0", "AceHook-3.0", "AceEvent-3.0", "AceComm-3.0", "AceSerializer-3.0")
+Incite.version = GetAddOnMetadata("Incite-RaidHelper", "Version")
 
 function Incite:OnInitialize()
-    self.version = GetAddOnMetadata("Incite-RaidHelper", "Version")
     self.db = LibStub("AceDB-3.0"):New("Incite_Database")
 
     Incite:RegisterChatCommand("incite", "DispatchCommand")
