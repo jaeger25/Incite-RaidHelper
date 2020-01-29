@@ -11,18 +11,11 @@ function GuildHandlers:GUILD_ROSTER_UPDATE(canRequestRosterUpdate)
 end
 
 function GuildHandlers:SaveRoster()
-    local guildName, guildRankName, guildRankIndex, realm = GetGuildInfo("player");
-    local numTotal, numOnline, numOnlineAndMobile = GetNumGuildMembers();
+    local guildName = GetGuildInfo("player")
+    local numTotal, numOnline, numOnlineAndMobile = GetNumGuildMembers()
     local unixTimestamp = GetServerTime()
 
-    if Incite.db.factionrealm[guildName] == nil
-    then
-        Incite.db.factionrealm[guildName] = {}
-        Incite.db.factionrealm[guildName].Roster = {}
-    end
-
     Incite.db.factionrealm[guildName].Roster.LastModifiedAt = unixTimestamp
-    Incite.db.factionrealm[guildName].Roster.Characters = {}
 
     for i = 1, numTotal
     do

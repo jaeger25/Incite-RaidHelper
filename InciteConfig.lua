@@ -23,18 +23,78 @@ local InciteConfig =
             type = "group",
             args =
             {
-                debuffs = 
+                warriorDebuffs = 
                 {
-                    name = "Disallowed Debuffs",
+                    name = "Warrior",
                     desc = "Select the debuffs which are not allowed.",
                     type = "multiselect",
-                    values =
-                    {
-                        -- Warriors
-                        "Rend",
-                        "Mortal Strike",
-                    }
-                }
+                    get = function(...) return DebuffTracker:GetIsDebuffDisallowed(...) end,
+                    set = function(...) DebuffTracker:SetIsDebuffDisallowed(...) end,
+                    values = DebuffTracker.WarriorDebuffs,
+                },
+                warlockDebuffs = 
+                {
+                    name = "Warlock",
+                    desc = "Select the debuffs which are not allowed.",
+                    type = "multiselect",
+                    get = function(...) return DebuffTracker:GetIsDebuffDisallowed(...) end,
+                    set = function(...) DebuffTracker:SetIsDebuffDisallowed(...) end,
+                    values = DebuffTracker.WarlockDebuffs,
+                },
+                priestDebuffs = 
+                {
+                    name = "Priest",
+                    desc = "Select the debuffs which are not allowed.",
+                    type = "multiselect",
+                    get = function(...) return DebuffTracker:GetIsDebuffDisallowed(...) end,
+                    set = function(...) DebuffTracker:SetIsDebuffDisallowed(...) end,
+                    values = DebuffTracker.PriestDebuffs,
+                },
+                mageDebuffs = 
+                {
+                    name = "Mage",
+                    desc = "Select the debuffs which are not allowed.",
+                    type = "multiselect",
+                    get = function(...) return DebuffTracker:GetIsDebuffDisallowed(...) end,
+                    set = function(...) DebuffTracker:SetIsDebuffDisallowed(...) end,
+                    values = DebuffTracker.MageDebuffs,
+                },
+                druidDebuffs = 
+                {
+                    name = "Druid",
+                    desc = "Select the debuffs which are not allowed.",
+                    type = "multiselect",
+                    get = function(...) return DebuffTracker:GetIsDebuffDisallowed(...) end,
+                    set = function(...) DebuffTracker:SetIsDebuffDisallowed(...) end,
+                    values = DebuffTracker.DruidDebuffs,
+                },
+                hunterDebuffs = 
+                {
+                    name = "Hunter",
+                    desc = "Select the debuffs which are not allowed.",
+                    type = "multiselect",
+                    get = function(...) return DebuffTracker:GetIsDebuffDisallowed(...) end,
+                    set = function(...) DebuffTracker:SetIsDebuffDisallowed(...) end,
+                    values = DebuffTracker.HunterDebuffs,
+                },
+                rogueDebuffs = 
+                {
+                    name = "Rogue",
+                    desc = "Select the debuffs which are not allowed.",
+                    type = "multiselect",
+                    get = function(...) return DebuffTracker:GetIsDebuffDisallowed(...) end,
+                    set = function(...) DebuffTracker:SetIsDebuffDisallowed(...) end,
+                    values = DebuffTracker.RogueDebuffs,
+                },
+                shamanDebuffs = 
+                {
+                    name = "Shaman",
+                    desc = "Select the debuffs which are not allowed.",
+                    type = "multiselect",
+                    get = function(...) return DebuffTracker:GetIsDebuffDisallowed(...) end,
+                    set = function(...) DebuffTracker:SetIsDebuffDisallowed(...) end,
+                    values = DebuffTracker.ShamanDebuffs,
+                },
             }
         }
     }

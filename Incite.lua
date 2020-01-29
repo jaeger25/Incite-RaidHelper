@@ -4,6 +4,16 @@ Incite.version = GetAddOnMetadata("Incite-RaidHelper", "Version")
 function Incite:OnInitialize()
     self.db = LibStub("AceDB-3.0"):New("Incite_Database")
 
+    local GuildName = GetGuildInfo("player")
+
+    if self.db.factionrealm[GuildName] == nil
+    then
+        self.db.factionrealm[GuildName] = {}
+        self.db.factionrealm[GuildName].DisallowedDebuffs = {}
+        self.db.factionrealm[GuildName].Roster = {}
+        self.db.factionrealm[GuildName].Roster.Characters = {}
+    end
+
     Incite:RegisterChatCommand("incite", "DispatchCommand")
 end
 
