@@ -7,12 +7,17 @@ local GuildName = GetGuildInfo("player")
 
 LibStub("AceEvent-3.0"):Embed(DebuffTracker)
 
+DebuffTracker.DebuffExpirationTimes = {}
+
 function DebuffTracker:COMBAT_LOG_EVENT_UNFILTERED(event)
     self:DetectBadDebuff(CombatLogGetCurrentEventInfo())
 end
 
 function DebuffTracker:ENCOUNTER_START(event)
-    self:RegisterEvent("UNIT_AURA")
+    if UnitIsGroupLeader("player")
+    then
+        self:RegisterEvent("UNIT_AURA")
+    end
 end
 
 function DebuffTracker:ENCOUNTER_END(event)
@@ -20,7 +25,6 @@ function DebuffTracker:ENCOUNTER_END(event)
 end
 
 function DebuffTracker:UNIT_AURA(event, unitTarget)
-    Incite:Print(unitTarget)
     if unitTarget:startswith("boss")
     then
         self:DetectBadDebuff(unitTarget)
@@ -44,8 +48,9 @@ function DebuffTracker:DetectBadDebuff(unitTarget)
         if name == nil
         then
             break
-        elseif self:GetIsDebuffDisallowed(nil, name)
+        elseif self:GetIsDebuffDisallowed(nil, name) and self.DebuffExpirationTimes[name] ~= expirationTime
         then
+            self.DebuffExpirationTimes[name] = expirationTime
             SendChatMessage("SHAME!!! "..PlayerName.." used "..name, "RAID")
         end
     end
