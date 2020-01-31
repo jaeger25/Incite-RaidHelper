@@ -2,17 +2,12 @@ Incite = LibStub("AceAddon-3.0"):NewAddon("Incite", "AceConsole-3.0", "AceHook-3
 Incite.version = GetAddOnMetadata("Incite-RaidHelper", "Version")
 
 function Incite:OnInitialize()
+    local guildName = GetGuildInfo("player")
+
     self.db = LibStub("AceDB-3.0"):New("Incite_Database")
-
-    local GuildName = GetGuildInfo("player")
-
-    if self.db.factionrealm[GuildName] == nil
-    then
-        self.db.factionrealm[GuildName] = {}
-        self.db.factionrealm[GuildName].DisallowedDebuffs = {}
-        self.db.factionrealm[GuildName].Roster = {}
-        self.db.factionrealm[GuildName].Roster.Characters = {}
-    end
+    self.GuildName = guildName
+    self.PlayerGUID = UnitGUID("player")
+    self.PlayerName = UnitName("player")
 
     Incite:RegisterChatCommand("incite", "DispatchCommand")
 end

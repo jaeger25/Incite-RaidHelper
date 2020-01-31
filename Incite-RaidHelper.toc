@@ -3,7 +3,7 @@
 ## Notes: WoW classic raid assist addon
 ## Author: 4Shot Development
 ## SavedVariables: Incite_Database
-## Version: 0.0.5
+## Version: 0.0.4
 
 Libs\embeds.xml
 

@@ -1,23 +1,12 @@
 local DebuffTracker = {}
 _G["DebuffTracker"] = DebuffTracker
 
-local PlayerGUID = UnitGUID("player")
-local PlayerName = UnitName("player")
-local GuildName = GetGuildInfo("player")
-
 LibStub("AceEvent-3.0"):Embed(DebuffTracker)
 
 DebuffTracker.DebuffExpirationTimes = {}
 
-function DebuffTracker:COMBAT_LOG_EVENT_UNFILTERED(event)
-    self:DetectBadDebuff(CombatLogGetCurrentEventInfo())
-end
-
 function DebuffTracker:ENCOUNTER_START(event)
-    if UnitIsGroupLeader("player")
-    then
-        self:RegisterEvent("UNIT_AURA")
-    end
+    self:RegisterEvent("UNIT_AURA")
 end
 
 function DebuffTracker:ENCOUNTER_END(event)
@@ -25,10 +14,7 @@ function DebuffTracker:ENCOUNTER_END(event)
 end
 
 function DebuffTracker:UNIT_AURA(event, unitTarget)
-    if unitTarget:startswith("boss")
-    then
-        self:DetectBadDebuff(unitTarget)
-    end
+    self:DetectBadDebuff(unitTarget)
 end
 
 function DebuffTracker:GetIsDebuffDisallowed(info, name)
@@ -40,6 +26,11 @@ function DebuffTracker:SetIsDebuffDisallowed(info, name, isDisallowed)
 end
 
 function DebuffTracker:DetectBadDebuff(unitTarget)
+    if unitTarget ~= "target" and not unitTarget:startswith("boss")
+    then
+        return
+    end
+
     for i=1, 40
     do
         local name, icon, count, debuffType, duration,
@@ -51,7 +42,15 @@ function DebuffTracker:DetectBadDebuff(unitTarget)
         elseif self:GetIsDebuffDisallowed(nil, name) and self.DebuffExpirationTimes[name] ~= expirationTime
         then
             self.DebuffExpirationTimes[name] = expirationTime
-            SendChatMessage("SHAME!!! "..PlayerName.." used "..name, "RAID")
+
+            if UnitIsGroupLeader("player")
+            then
+                SendChatMessage("SHAME!!! "..Incite.PlayerName.." used "..name, "RAID_WARNING")                
+            end
+            if sourceUnitId == "player"
+            then
+                SendChatMessage("[Incite] The following debuff is disallowed: "..name, "WHISPER", nil, Incite.PlayerName)   
+            end
         end
     end
 
