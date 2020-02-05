@@ -4,6 +4,18 @@ _G["GuildHandlers"] = GuildHandlers
 LibStub("AceEvent-3.0"):Embed(GuildHandlers)
 
 function GuildHandlers:GUILD_ROSTER_UPDATE(canRequestRosterUpdate)
+
+    local guildName = GetGuildInfo("player")
+    self.GuildName = guildName
+
+    if guildName and Incite.db.factionrealm[guildName] == nil
+    then
+        Incite.db.factionrealm[guildName] = {}
+        Incite.db.factionrealm[guildName].DisallowedDebuffs = {}
+        Incite.db.factionrealm[guildName].Roster = {}
+        Incite.db.factionrealm[guildName].Roster.Characters = {}
+    end
+
     if C_GuildInfo.CanViewOfficerNote
     then
         self:SaveRoster()
@@ -11,18 +23,11 @@ function GuildHandlers:GUILD_ROSTER_UPDATE(canRequestRosterUpdate)
 end
 
 function GuildHandlers:SaveRoster()
-    local guildName, guildRankName, guildRankIndex, realm = GetGuildInfo(Wow.UnitId.player);
-    local numTotal, numOnline, numOnlineAndMobile = GetNumGuildMembers();
+    local guildName = GetGuildInfo("player")
+    local numTotal, numOnline, numOnlineAndMobile = GetNumGuildMembers()
     local unixTimestamp = GetServerTime()
 
-    if Incite.db.factionrealm[guildName] == nil
-    then
-        Incite.db.factionrealm[guildName] = {}
-        Incite.db.factionrealm[guildName].Roster = {}
-    end
-
     Incite.db.factionrealm[guildName].Roster.LastModifiedAt = unixTimestamp
-    Incite.db.factionrealm[guildName].Roster.Characters = {}
 
     for i = 1, numTotal
     do
