@@ -18,11 +18,11 @@ function DebuffTracker:UNIT_AURA(event, unitTarget)
 end
 
 function DebuffTracker:GetIsDebuffDisallowed(info, name)
-    return Incite.db.factionrealm[GuildName].DisallowedDebuffs[name]
+    return Incite.db.factionrealm[Incite.GuildName].DisallowedDebuffs[name]
 end
 
 function DebuffTracker:SetIsDebuffDisallowed(info, name, isDisallowed)
-    Incite.db.factionrealm[GuildName].DisallowedDebuffs[name] = isDisallowed
+    Incite.db.factionrealm[Incite.GuildName].DisallowedDebuffs[name] = isDisallowed
 end
 
 function DebuffTracker:DetectBadDebuff(unitTarget)
@@ -41,11 +41,12 @@ function DebuffTracker:DetectBadDebuff(unitTarget)
             break
         elseif self:GetIsDebuffDisallowed(nil, name) and self.DebuffExpirationTimes[name] ~= expirationTime
         then
+            local sourceName = UnitName(sourceUnitId)
             self.DebuffExpirationTimes[name] = expirationTime
 
             if UnitIsGroupLeader("player")
             then
-                SendChatMessage("SHAME!!! "..Incite.PlayerName.." used "..name, "RAID_WARNING")                
+                SendChatMessage("SHAME!!! "..sourceName.." used "..name, "RAID_WARNING")                
             end
             if sourceUnitId == "player"
             then
