@@ -1,13 +1,16 @@
 Incite = LibStub("AceAddon-3.0"):NewAddon("Incite", "AceConsole-3.0", "AceHook-3.0", "AceEvent-3.0", "AceComm-3.0", "AceSerializer-3.0")
+_G["Incite"] = Incite
+
 Incite.version = GetAddOnMetadata("Incite-RaidHelper", "Version")
 
 function Incite:OnInitialize()
+    Incite:Print("OnInitialize")
     local guildName = GetGuildInfo("player")
 
-    self.db = LibStub("AceDB-3.0"):New("Incite_Database")
-    self.GuildName = guildName
-    self.PlayerGUID = UnitGUID("player")
-    self.PlayerName = UnitName("player")
+    Incite.db = LibStub("AceDB-3.0"):New("Incite_Database")
+    Incite.GuildName = guildName
+    Incite.PlayerGUID = UnitGUID("player")
+    Incite.PlayerName = UnitName("player")
 
     Incite:RegisterChatCommand("incite", "DispatchCommand")
 end
