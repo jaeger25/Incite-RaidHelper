@@ -4,7 +4,6 @@ _G["Incite"] = Incite
 Incite.version = GetAddOnMetadata("Incite-RaidHelper", "Version")
 
 function Incite:OnInitialize()
-    Incite:Print("OnInitialize")
     local guildName = GetGuildInfo("player")
 
     Incite.db = LibStub("AceDB-3.0"):New("Incite_Database")
