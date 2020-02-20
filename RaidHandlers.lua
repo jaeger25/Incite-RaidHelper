@@ -25,6 +25,40 @@ local function SplitAddonNames(addonNames)
     return addons
 end
 
+function GetHigherVersion(version1, version2)
+    local version1Parts = SplitString(version1:gsub("v", "0"), "%.")
+    local version2Parts = SplitString(version2:gsub("v", "0"), "%.")
+
+    Incite:Print(table.tostring(version1Parts))
+    Incite:Print(table.tostring(version2Parts))
+
+    for i = 1, 4
+    do
+        local v1Part = tonumber(version1Parts[i])
+        local v2Part = tonumber(version2Parts[i])
+
+        Incite:Print(v1Part)
+        Incite:Print(v2Part)
+
+        if (v1Part == nil and v2Part == nil)
+        then
+            return version1
+        elseif v1Part == nil
+        then
+            return version2
+        elseif v2Part == nil
+        then
+            return version1
+        elseif v1Part > v2Part
+        then
+            return version1
+        elseif v2Part > v1Part
+        then
+            return version2
+        end
+    end
+end
+
 function RaidHandlers:CheckAddons()
     self.CheckAddonsResponses = {}
 
@@ -55,7 +89,7 @@ function RaidHandlers:OnCheckAddonsTimerExpired()
 
         for name,version in pairs(addons)
         do
-            if version > latestAddons[name]
+            if version == GetHigherVersion(version, latestAddons[name])
             then
                 latestAddons[name] = version
             end
@@ -106,11 +140,14 @@ end
 
 function RaidHandlers:OnCheckAddonsRequest(addons, sender)
     local addons = ConcatAddonNames(true)
-    self:SendCommMessage("incite-raid", "check-addons-response:"..addons, "WHISPER", sender)
+    self:SendCommMessage("incite-raid", "check-addons-response:"..addons, "RAID", sender)
 end
 
 function RaidHandlers:OnCheckAddonsResponse(addons, sender)
-    self.CheckAddonsResponses[sender] = addons
+    if self.CheckAddonsResponses ~= nil
+    then
+        self.CheckAddonsResponses[sender] = addons
+    end
 end
 
 RaidHandlers:RegisterComm("incite-raid")
