@@ -6,7 +6,12 @@ LibStub("AceEvent-3.0"):Embed(GuildHandlers)
 function GuildHandlers:GUILD_ROSTER_UPDATE(canRequestRosterUpdate)
 
     local guildName = GetGuildInfo("player")
-    self.GuildName = guildName
+    if (guildName == nil)
+    then
+        return
+    end
+
+    Incite.GuildName = guildName
 
     if guildName and Incite.db.factionrealm[guildName] == nil
     then
@@ -23,7 +28,7 @@ function GuildHandlers:GUILD_ROSTER_UPDATE(canRequestRosterUpdate)
 end
 
 function GuildHandlers:SaveRoster()
-    local guildName = GetGuildInfo("player")
+    local guildName = Incite.GuildName
     local numTotal, numOnline, numOnlineAndMobile = GetNumGuildMembers()
     local unixTimestamp = GetServerTime()
 
